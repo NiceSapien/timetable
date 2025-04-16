@@ -1,0 +1,17 @@
+name: Flutter -  Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build and Deploy Flutter Project
+    runs-on: macos-latest
+
+    steps:
+     - name: Flutter Deployment
+       uses: jeanluc243/Flutter-Deployment@0.1
+          
