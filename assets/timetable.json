@@ -1,0 +1,14 @@
+{
+    "days": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+    "timetable": [
+        ["English 2", "English 2", "English 2", "Thursday", "English 1"],
+        ["Chemistry", "P.E.", "Maths", "Chemistry", "Punjabi"],
+        ["Maths", "English 1", "SUPW", "Geography", "Maths"],
+        ["Geography", "Maths", "Chemistry", "Physics", "Geography"],
+        ["P.E.", "Geography", "History", "History", "Biology"],
+        ["Library", "History", "Punjabi", "Punjabi", "Chemistry"],
+        ["Physics", "Biology", "Biology", "Biology", "Physics"],
+        ["English 1", "Physics", "Maths", "Maths", "History"]
+      ]
+  }
+  
