@@ -1,17 +1,59 @@
-name: Flutter -  Build
+name: Flutter Build
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
   pull_request:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   build:
-    name: Build and Deploy Flutter Project
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        platform: [android, web, linux, windows, macos]
 
     steps:
-     - name: Flutter Deployment
-       uses: jeanluc243/Flutter-Deployment@0.1
-          
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 'latest'
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build for ${{ matrix.platform }}
+        run: |
+          if [ "${{ matrix.platform }}" == "android" ]; then
+            flutter build apk --release
+          elif [ "${{ matrix.platform }}" == "web" ]; then
+            flutter build web --release
+          elif [ "${{ matrix.platform }}" == "linux" ]; then
+            flutter build linux --release
+          elif [ "${{ matrix.platform }}" == "windows" ]; then
+            flutter build windows --release
+          elif [ "${{ matrix.platform }}" == "macos" ]; then
+            flutter build macos --release
+          fi
+
+      - name: Upload Build Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.platform }}-build
+          path: |
+            build/${{ matrix.platform }}/outputs/apk/release/*.apk
+            build/web/*
+            build/linux/x64/release/bundle/*
+            build/windows/runner/Release/*
+            build/macos/Build/Products/Release/*.app
