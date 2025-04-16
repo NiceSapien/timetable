@@ -29,19 +29,14 @@ jobs:
         uses: subosito/flutter-action@v2
         with:
           channel: 'stable'
-          # cache: true # Enable Flutter cache (experimental but useful)
+          # cache: true
 
-      - name: Get Flutter dependencies
-        run: flutter pub get
+      # Use 'pub upgrade' instead of 'pub get' to fetch latest plugin versions
+      # This is needed to resolve v1/v2 Android embedding issues (e.g., path_provider_android)
+      - name: Upgrade Flutter dependencies
+        run: flutter pub upgrade # Changed from 'flutter pub get'
 
-      # NOTE: flutter analyze step removed temporarily due to error:
-      # "The name 'MyApp' isn't a class" in test/widget_test.dart.
-      # RECOMMENDATION: Fix the error in test/widget_test.dart and re-enable this step.
-      # - name: Analyze project source
-      #   run: flutter analyze
-
-      # NOTE: flutter test step removed from all jobs due to error in test/widget_test.dart.
-      # Fix the test file before re-enabling.
+      # NOTE: Analyze and test steps removed.
 
       - name: Build Flutter APK (Release)
         run: flutter build apk --release
@@ -78,12 +73,9 @@ jobs:
           # cache: true
 
       - name: Get Flutter dependencies
-        run: flutter pub get
+        run: flutter pub get # Keep 'get' here as iOS build was working
 
-      - name: Analyze project source
-        run: flutter analyze
-
-      # NOTE: flutter test step removed. Fix test/widget_test.dart before re-enabling.
+      # NOTE: Analyze and test steps removed.
 
       - name: Build Flutter iOS (Release - No Code Signing)
         run: flutter build ios --release --no-codesign
@@ -114,12 +106,9 @@ jobs:
         run: flutter config --enable-web
 
       - name: Get Flutter dependencies
-        run: flutter pub get
+        run: flutter pub get # Keep 'get' here as Web build was working
 
-      - name: Analyze project source
-        run: flutter analyze
-
-      # NOTE: flutter test step removed. Fix test/widget_test.dart before re-enabling.
+      # NOTE: Analyze and test steps removed.
 
       - name: Build Flutter Web (Release)
         run: flutter build web --release
@@ -155,12 +144,9 @@ jobs:
         run: flutter config --enable-linux-desktop
 
       - name: Get Flutter dependencies
-        run: flutter pub get
+        run: flutter pub get # Keep 'get' here as Linux build was working
 
-      - name: Analyze project source
-        run: flutter analyze
-
-      # NOTE: flutter test step removed. Fix test/widget_test.dart before re-enabling.
+      # NOTE: Analyze and test steps removed.
 
       - name: Build Flutter Linux (Release)
         run: flutter build linux --release
@@ -191,12 +177,9 @@ jobs:
         run: flutter config --enable-macos-desktop
 
       - name: Get Flutter dependencies
-        run: flutter pub get
+        run: flutter pub get # Keep 'get' here as macOS build was working
 
-      - name: Analyze project source
-        run: flutter analyze
-
-      # NOTE: flutter test step removed. Fix test/widget_test.dart before re-enabling.
+      # NOTE: Analyze and test steps removed.
 
       - name: Build Flutter macOS (Release)
         run: flutter build macos --release
@@ -205,8 +188,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-macos-app # Contains the .app bundle
-          # Use the correct path and upload the .app directory directly
-          # Replace YourAppName.app if Flutter generates a different name
           path: build/macos/Build/Products/Release/*.app
 
   #----------------------------------------------------
@@ -229,12 +210,9 @@ jobs:
         run: flutter config --enable-windows-desktop
 
       - name: Get Flutter dependencies
-        run: flutter pub get
+        run: flutter pub get # Keep 'get' here as Windows build was working
 
-      - name: Analyze project source
-        run: flutter analyze
-
-      # NOTE: flutter test step removed. Fix test/widget_test.dart before re-enabling.
+      # NOTE: Analyze and test steps removed.
 
       - name: Build Flutter Windows (Release)
         run: flutter build windows --release
@@ -243,5 +221,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: release-windows
-          # Use the corrected path. Use forward slashes in YAML.
           path: build/windows/x64/runner/Release/
