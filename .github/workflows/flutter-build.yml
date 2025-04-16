@@ -2,58 +2,97 @@ name: Flutter Build
 
 on:
   push:
-    branches:
-      - main
+    branches: [ "main" ]
   pull_request:
-    branches:
-      - main
+    branches: [ "main" ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-
     strategy:
       matrix:
-        platform: [android, web, linux, windows, macos]
+        os: [android, ios, web]
+        include:
+          - os: android
+            build_command: flutter build apk --split-per-abi
+            artifact_name: app-android
+            artifact_pattern: build/app/outputs/flutter-apk/app-*.apk
+          - os: ios
+            build_command: flutter build ios --no-codesign
+            artifact_name: app-ios
+            artifact_pattern: build/ios/iphoneos/*.ipa
+          - os: web
+            build_command: flutter build web
+            artifact_name: web
+            artifact_pattern: build/web/**
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v4
 
-      - name: Set up JDK
-        uses: actions/setup-java@v1
-        with:
-          java-version: '11'
-
-      - name: Install Flutter
+      - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.2'  # Specify the Flutter version here
+          flutter-version: '3.x' # Or specify your desired Flutter version
 
-      - name: Install dependencies
+      - name: Get dependencies
         run: flutter pub get
 
-      - name: Build for ${{ matrix.platform }}
-        run: |
-          if [ "${{ matrix.platform }}" == "android" ]; then
-            flutter build apk --release
-          elif [ "${{ matrix.platform }}" == "web" ]; then
-            flutter build web --release
-          elif [ "${{ matrix.platform }}" == "linux" ]; then
-            flutter build linux --release
-          elif [ "${{ matrix.platform }}" == "windows" ]; then
-            flutter build windows --release
-          elif [ "${{ matrix.platform }}" == "macos" ]; then
-            flutter build macos --release
-          fi
+      - name: Analyze project
+        run: flutter analyze --fatal-infos
 
-      - name: Upload Build Artifacts
+      - name: Run tests
+        run: flutter test
+
+      - name: Build ${{ matrix.os }}
+        run: |
+          echo "Building for ${{ matrix.os }}"
+          ${{ matrix.build_command }}
+
+      - name: Upload ${{ matrix.artifact_name }} Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.platform }}-build
-          path: |
-            build/app/outputs/flutter-apk/app-release.apk
-            build/web/*
-            build/linux/x64/release/bundle/*
-            build/windows/runner/Release/*
-            build/macos/Build/Products/Release/*.app
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_pattern }}
+
+  desktop:
+    needs: build
+    strategy:
+      matrix:
+        os: [macos-latest, windows-latest, ubuntu-latest]
+        include:
+          - os: macos-latest
+            build_command: flutter build macos
+            artifact_name: app-macos
+            artifact_pattern: build/macos/Build/Products/Release/*.app.zip
+          - os: windows-latest
+            build_command: flutter build windows
+            artifact_name: app-windows
+            artifact_pattern: build/windows/runner/Release/*.zip
+          - os: ubuntu-latest
+            build_command: flutter build linux
+            artifact_name: app-linux
+            artifact_pattern: build/linux/x64/release/*.tar.gz
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.x' # Or specify your desired Flutter version
+
+      - name: Get dependencies
+        run: flutter pub get
+
+      - name: Build ${{ matrix.os }}
+        run: |
+          echo "Building for ${{ matrix.os }}"
+          ${{ matrix.build_command }}
+
+      - name: Upload ${{ matrix.artifact_name }} Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}
+          path: ${{ matrix.artifact_pattern }}
