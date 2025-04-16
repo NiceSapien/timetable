@@ -48,11 +48,11 @@ jobs:
           fi
 
       - name: Upload Build Artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.platform }}-build
           path: |
-            build/${{ matrix.platform }}/outputs/apk/release/*.apk
+            build/app/outputs/flutter-apk/app-release.apk
             build/web/*
             build/linux/x64/release/bundle/*
             build/windows/runner/Release/*
