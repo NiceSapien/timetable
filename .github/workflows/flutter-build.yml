@@ -34,13 +34,14 @@ jobs:
       - name: Get Flutter dependencies
         run: flutter pub get
 
-      # NOTE: flutter analyze and flutter test steps removed temporarily
-      # due to error: "The name 'MyApp' isn't a class" in test/widget_test.dart.
-      # RECOMMENDATION: Fix the error in test/widget_test.dart and re-enable these steps.
+      # NOTE: flutter analyze step removed temporarily due to error:
+      # "The name 'MyApp' isn't a class" in test/widget_test.dart.
+      # RECOMMENDATION: Fix the error in test/widget_test.dart and re-enable this step.
       # - name: Analyze project source
       #   run: flutter analyze
-      # - name: Run tests
-      #   run: flutter test
+
+      # NOTE: flutter test step removed from all jobs due to error in test/widget_test.dart.
+      # Fix the test file before re-enabling.
 
       - name: Build Flutter APK (Release)
         run: flutter build apk --release
@@ -82,14 +83,11 @@ jobs:
       - name: Analyze project source
         run: flutter analyze
 
-      # NOTE: flutter test step removed temporarily. Re-enable after fixing test/widget_test.dart.
-      # - name: Run tests
-      #   run: flutter test
+      # NOTE: flutter test step removed. Fix test/widget_test.dart before re-enabling.
 
       - name: Build Flutter iOS (Release - No Code Signing)
         run: flutter build ios --release --no-codesign
 
-      # No need to zip, upload-artifact handles directories
       - name: Upload iOS App Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -121,9 +119,7 @@ jobs:
       - name: Analyze project source
         run: flutter analyze
 
-      # NOTE: flutter test step removed temporarily. Re-enable after fixing test/widget_test.dart.
-      # - name: Run tests
-      #   run: flutter test
+      # NOTE: flutter test step removed. Fix test/widget_test.dart before re-enabling.
 
       - name: Build Flutter Web (Release)
         run: flutter build web --release
@@ -164,9 +160,7 @@ jobs:
       - name: Analyze project source
         run: flutter analyze
 
-      # NOTE: flutter test step removed temporarily. Re-enable after fixing test/widget_test.dart.
-      # - name: Run tests
-      #   run: flutter test
+      # NOTE: flutter test step removed. Fix test/widget_test.dart before re-enabling.
 
       - name: Build Flutter Linux (Release)
         run: flutter build linux --release
@@ -202,9 +196,7 @@ jobs:
       - name: Analyze project source
         run: flutter analyze
 
-      # NOTE: flutter test step removed temporarily. Re-enable after fixing test/widget_test.dart.
-      # - name: Run tests
-      #   run: flutter test
+      # NOTE: flutter test step removed. Fix test/widget_test.dart before re-enabling.
 
       - name: Build Flutter macOS (Release)
         run: flutter build macos --release
@@ -242,9 +234,7 @@ jobs:
       - name: Analyze project source
         run: flutter analyze
 
-      # NOTE: flutter test step removed temporarily. Re-enable after fixing test/widget_test.dart.
-      # - name: Run tests
-      #   run: flutter test
+      # NOTE: flutter test step removed. Fix test/widget_test.dart before re-enabling.
 
       - name: Build Flutter Windows (Release)
         run: flutter build windows --release
